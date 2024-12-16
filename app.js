@@ -1,36 +1,43 @@
-document.getElementById("btnTask").addEventListener("click",addTask);
+document.getElementById("btnTask").addEventListener("click", addTask);
 let orderList = document.getElementById("orderList");
-let DoList = document.getElementById("DoList");
+let doList = document.getElementById("DoList");
 
 let listArray = [];
 
+function addTask() {
+  let inputText = document.getElementById("inputText").value;
 
-function addTask(){
-    let inputText = document.getElementById("inputText").value;
+  if (inputText.trim() === "") {
+    alert("Please enter a task!");
+    return;
+  }
 
-    listArray.push( `<li class="list-group-item">
-        <input class="form-check-input me-1" type="checkbox" value="" id="thirdCheckbox">
-        <label class="form-check-label" for="thirdCheckbox">${inputText}</label>
-      </li>`);
-    
-    orderList.innerHTML+=listArray[listArray.length-1];
+  let listItemHTML = `<li class="list-group-item">
+        <input class="form-check-input me-1" type="checkbox" value="">
+        <label class="form-check-label">${inputText}</label>
+    </li>`;
 
-  document.getElementById("inputText").value="";  
-  
-  document.getElementById("thirdCheckbox").addEventListener("change",function () {
-    if(this.checked==true){
-        console.log("cheked");
-        
-        
-    }else if(this.checked==false){
-        console.log("uncked");
-        
-    }
-  })
+  listArray.push(listItemHTML);
 
+  orderList.innerHTML += listArray[listArray.length - 1];
 
+  document.getElementById("inputText").value = "";
+
+  // Re-bind event listeners to all checkboxes in the order list
+  let checkboxes = orderList.querySelectorAll("input[type='checkbox']");
+  checkboxes.forEach((checkbox, index) => {
+    checkbox.onchange = function () {
+      if (this.checked) {
+        // Move the corresponding list item to the DoList
+        let listItem = this.parentElement;
+        doList.appendChild(listItem);
+        listArray.splice(index, 1); // Remove from listArray
+      } else {
+        // Move it back to the OrderList
+        let listItem = this.parentElement;
+        orderList.appendChild(listItem);
+        listArray.push(listItem.outerHTML); // Re-add to listArray
+      }
+    };
+  });
 }
-
-
-
-
